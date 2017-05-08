@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin'); //css单独打包
 var HtmlWebpackPlugin = require('html-webpack-plugin'); //生成html
 
@@ -37,7 +38,7 @@ module.exports = {
               fallback: "style-loader",
               use: ['css-loader']
               }),
-            include: [APP_PATH]
+            include: [APP_PATH,path.join(__dirname, './node_modules/.2.10..@antd')]
         }, {
             test: /\.less$/,
             exclude: /^node_modules$/,
@@ -71,7 +72,28 @@ module.exports = {
             exclude: /^node_modules$/,
             loaders: ['jsx-loader', 'babel-loader'],
             include: [APP_PATH]
-        }]
+        },
+        {
+            test: /\.jsx$/,
+            exclude: /^node_modules$/,
+            loaders: 'babel-loader',
+            query: {
+                    presets: [
+                        'react',
+                        ['es2015', {modules: false}],
+                        'stage-0'
+                    ],
+                    plugins: [
+                      ['transform-runtime'],
+                      ["import", [
+                        { "style": "css", "libraryName": "antd"}
+                      ]]
+                    ],
+                    cacheDirectory: false
+                },
+            include: [APP_PATH]
+        }
+      ]
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -86,6 +108,9 @@ module.exports = {
             inject: 'body',
             hash: false,
         }),
+        new CopyWebpackPlugin([
+            {from: path.resolve(__dirname, './test_data'), to: path.resolve(__dirname, './public/test_data')}
+        ]),
         new ExtractTextPlugin('[name].css')
         // new webpack.LoaderOptionsPlugin({
         //   minimize: false,
@@ -108,6 +133,11 @@ module.exports = {
         // })
     ],
     resolve: {
-        extensions: ['.js', '.jsx', '.less', '.scss', '.css'], //后缀名自动补全
+      modules: [
+            'node_modules',
+            path.join(__dirname, '../node_modules'),
+            path.resolve(__dirname)
+        ],
+        extensions: ['.web.js','.js', '.jsx', '.less','.json', '.scss', '.css'], //后缀名自动补全
     }
 };
