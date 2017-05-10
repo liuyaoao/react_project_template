@@ -5,13 +5,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as indexActions from '../actions/index_action';
 
-import { Layout, Menu, Breadcrumb, Icon,Affix as AffixPc } from 'antd';
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
-
-import superagent from 'superagent';
-import superagentJsonapify from 'superagent-jsonapify';
-superagentJsonapify(superagent);
 // import { is, fromJS} from 'immutable';
 // import {Tool} from '../Config/Tool';
 // import {Header,template} from './common/mixin';
@@ -29,7 +22,6 @@ class IndexPage extends Component {
             postProduct:[], //上传的商品信息
             serverId:'',   // 图片id
             picSrc:'',     //图片src
-            organizationsData:null,
             saleOldvalue:'',    //金额上次input值
             preventMountSubmit:true,//防止重复提交
         }
@@ -141,14 +133,29 @@ class IndexPage extends Component {
 
     }
 
+    componentWillUnmount() {
+        // cancelAnimationFrame(this.state.requestID);
+    }
     componentWillMount() {
-      let _this = this;
-      const request = superagent.get('../../test_data/organizations.json')
-        .then(function(response) {
-          const body = response.body;
-          console.log("request local orgnizasitions:",body);
-          _this.setState({"organizationsData":body});
-        });
+        // let params = this.props.location.query;
+        // if (this.props.producRecord.productList&&this.props.location.search!=='') {
+        //     let {productList} = this.props.producRecord;
+        //     let num = 0;
+        //     productList.forEach((item,index) => {
+        //         if (item.chooseState&&item.num>0) {
+        //             this.state.products[num] = [item.productName,item.num.toString()];
+        //             this.state.postProduct[num] = {};
+        //             this.state.postProduct[num]['id'] = item.id;
+        //             this.state.postProduct[num]['quantity'] = item.num;
+        //             num++;
+        //         }
+        //     })
+        // }
+        // this.state.saleMoney = params.saleMoney||'';
+        // this.state.name = params.name||'';
+        // this.state.phone = params.phone||'';
+        // this.state.picSrc = params.picSrc||'';
+        // this.state.serverId = params.serverId||'';
     }
     componentDidMount() {
         // const url = window.location.href.split('#')[0];
@@ -180,102 +187,11 @@ class IndexPage extends Component {
     //
     //     }
     // }
-    getListContentElements(){
-      let oneRow = (<div className="addressbook_row">
-            <span className="addressbook_avator">
-              <img className="member_icon" width="40" height="40" src={''}/>
-            </span>
-            <div className="addressbook_detail">
-              <div className="member_name">liuyaoao</div>
-              <div className="member_desc">yaoao.liu@dragonflow.com</div>
-            </div>
-            <div className="addressbook_oper">
-              <Link to={'/signup_user_complete'} className='signup-team-login'>
-                发起聊天
-              </Link>
-            </div>
-          </div>);
 
-      let content = (<div className="addressbook_list">
-            {oneRow}
-            {oneRow}
-            {oneRow}
-            {oneRow}
-            {oneRow}
-          </div>);
-      return content;
-    }
-    getPCElements(sidebar){
-      let content = this.getListContentElements();
-      return ( <Layout style={{ height: '100vh' }}>
-                <Header className="header custom_ant_header addressbook_header" style={{position:'fixed',width:'100%',zIndex:'99999'}}>
-                      <div className="custom_ant_header_logo addressbook_logo" >
-                        <span className="logo_icon"><img width="40" height="40" src={''}/></span>
-                        <div className="logo_title">
-                          <p>@张三丰</p><p>司法E通</p>
-                          </div>
-                      </div>
-                      <Breadcrumb className="bread_content" style={{ margin: '0 10px',float:'left' }}>
-                        <Breadcrumb.Item className="bread_item">电子通讯录</Breadcrumb.Item>
-                        <Breadcrumb.Item className="bread_item">局长</Breadcrumb.Item>
-                      </Breadcrumb>
-                </Header>
-                <Layout style={{marginTop:'64px'}}>
-                  {sidebar}
-                  <Layout style={{ padding: '0' }}>
-                    <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280,overflow: 'initial' }}>
-                      {content}
-                    </Content>
-                  </Layout>
-                </Layout>
-              </Layout>);
-    }
     render() {
-
-      const sidebar = (<Sider width={240}
-          className="custom_ant_sidebar addressSidebar"
-          style={{ background: '#2071a7',color:'#fff',overflow: 'auto' }}>
-          <Menu
-            theme="dark"
-            mode="inline"
-            openKeys={this.state.openKeys}
-            selectedKeys={[this.state.current]}
-            style={{ width: 240 }}
-            onOpenChange={this.onMenuOpenChange}
-            onClick={this.handleClick} >
-            <SubMenu key="sub1" title={<span><Icon type="mail" /><span>Navigation One</span></span>}>
-              <Menu.Item key="1">Option 1</Menu.Item>
-              <Menu.Item key="2">Option 2</Menu.Item>
-              <Menu.Item key="3">Option 3</Menu.Item>
-              <Menu.Item key="4">Option 4</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" title={<span><Icon type="appstore" /><span>Navigation Two</span></span>}>
-              <Menu.Item key="5">Option 5</Menu.Item>
-              <Menu.Item key="6">Option 6</Menu.Item>
-              <SubMenu key="sub3" title="Submenu">
-                <Menu.Item key="7">Option 7</Menu.Item>
-                <Menu.Item key="8">Option 8</Menu.Item>
-              </SubMenu>
-            </SubMenu>
-            <SubMenu key="sub4" title={<span><Icon type="setting" /><span>Navigation Three</span></span>}>
-              <Menu.Item key="9">Option 9</Menu.Item>
-              <Menu.Item key="10">Option 10</Menu.Item>
-              <Menu.Item key="11">Option 11</Menu.Item>
-              <Menu.Item key="12">Option 12</Menu.Item>
-            </SubMenu>
-          </Menu>
-        </Sider>);
-
-      let finalEle = this.getPCElements(sidebar);
-
-      return (<div className="address_book_container">
-        {finalEle}
-      </div>);
+        // let products = this.state.products;
+        return (<div>hello world!!!......</div>);
     }
-
-    // componentWillUnmount() {
-    //     cancelAnimationFrame(this.state.requestID);
-    // }
 }
 IndexPage.propTypes = {
   testData: PropTypes.object.isRequired,

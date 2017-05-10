@@ -1,6 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin'); //css单独打包
 var HtmlWebpackPlugin = require('html-webpack-plugin'); //生成html
 
@@ -38,7 +37,7 @@ module.exports = {
               fallback: "style-loader",
               use: ['css-loader']
               }),
-            include: [APP_PATH,path.join(__dirname, './node_modules/.2.10..@antd')]
+            include: [APP_PATH]
         }, {
             test: /\.less$/,
             exclude: /^node_modules$/,
@@ -74,24 +73,25 @@ module.exports = {
             include: [APP_PATH]
         },
         {
-            test: /\.jsx$/,
+            test: /\.jsx?$/,
+            loader: 'babel-loader',
             exclude: /^node_modules$/,
-            loaders: 'babel-loader',
+            include: [APP_PATH],
             query: {
-                    presets: [
-                        'react',
-                        ['es2015', {modules: false}],
-                        'stage-0'
-                    ],
-                    plugins: [
-                      ['transform-runtime'],
-                      ["import", [
-                        { "style": "css", "libraryName": "antd"}
-                      ]]
-                    ],
-                    cacheDirectory: false
-                },
-            include: [APP_PATH]
+                presets: [
+                    'react',
+                    ['es2015', {modules: false}],
+                    'stage-0'
+                ],
+                plugins: [
+                  ['transform-runtime'],
+                  ["import", [
+                    { "style": "css", "libraryName": "antd-mobile"},
+                    { "style": "css", "libraryName": "antd"}
+                  ]]
+                ],
+                cacheDirectory: false
+            }
         }
       ]
     },
@@ -108,9 +108,6 @@ module.exports = {
             inject: 'body',
             hash: false,
         }),
-        new CopyWebpackPlugin([
-            {from: path.resolve(__dirname, './test_data'), to: path.resolve(__dirname, './public/test_data')}
-        ]),
         new ExtractTextPlugin('[name].css')
         // new webpack.LoaderOptionsPlugin({
         //   minimize: false,
@@ -133,11 +130,6 @@ module.exports = {
         // })
     ],
     resolve: {
-      modules: [
-            'node_modules',
-            path.join(__dirname, '../node_modules'),
-            path.resolve(__dirname)
-        ],
-        extensions: ['.web.js','.js', '.jsx', '.less','.json', '.scss', '.css'], //后缀名自动补全
+        extensions: ['.web.js', '.js', '.jsx', '.json', '.less', '.scss', '.css'], //后缀名自动补全
     }
 };
